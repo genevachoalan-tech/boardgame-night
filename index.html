@@ -1016,7 +1016,7 @@ window.G.renderG1=function(){
   const btn=document.getElementById('g1RollBtn');
   if(state.phase==='playing'){
     if(isHost){btn.disabled=true;btn.textContent='观战中'}
-    else if(!curId||!state.players[curId].online){btn.disabled=true;btn.textContent='等待重连...'}
+    else if(!curId||!state.players[curId]||!state.players[curId].online){btn.disabled=true;btn.textContent='等待重连...'}
     else{const myTurn=curId===myPeerId&&!state.players[myPeerId].failed;btn.disabled=!myTurn||this.g1Rolling;btn.textContent=myTurn?(this.g1Rolling?'投掷中...':'🎲 投掷骰子'):'等待对手...'}
   }else{btn.disabled=true;btn.textContent='游戏已结束'}
 };
