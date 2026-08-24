@@ -685,7 +685,6 @@ function hostStartNextGame(){
   showGoldConfirm(()=>{
     const nextGame=state.currentGame+1;
     state.currentGame=nextGame;
-    state.phase='playing';
     state.gameSummary=null;
     Object.values(state.players).forEach(p=>p.ready=false);
     if(window.G && window.G.init)window.G.init(nextGame);
@@ -873,7 +872,7 @@ function handlePlayerMsg(msg){
     if(msg.name)myName=msg.name;if(msg.team)myTeam=msg.team;if(msg.charId)myCharId=msg.charId;
     const roomId=document.getElementById('joinRoomInput').value.trim().toUpperCase();
     saveReconnectCode(roomId,msg.reconnectCode,myName,myCharId);
-    if(msg.reconnected&&msg.state){state=msg.state;if(state.phase==='playing'||state.phase==='gameOver'){enterGameScreen();if(state.phase==='playing'){window.G.gameId=state.currentGame;var _renderFn=window.G['renderG'+state.currentGame];if(_renderFn)try{_renderFn.call(window.G)}catch(_e){console.error('Render error:',_e);var _ga=document.getElementById('gameArea');if(_ga)_ga.innerHTML="<div style='color:#f87171;padding:20px;text-align:center'>渲染错误: "+_e.message+"</div>"}}else if(state.phase==='gameOver'){renderGameSummary()}}else{showScreen('publicLobby');renderPublicLobby()}return}
+    if(msg.reconnected&&msg.state){state=msg.state;const inGamePhase=['coinflip','skillselect','playing'].includes(state.phase);if(inGamePhase||state.phase==='gameOver'){enterGameScreen();if(inGamePhase){window.G.gameId=state.currentGame;var _renderFn=window.G['renderG'+state.currentGame];if(_renderFn)try{_renderFn.call(window.G)}catch(_e){console.error('Render error:',_e);var _ga=document.getElementById('gameArea');if(_ga)_ga.innerHTML="<div style='color:#f87171;padding:20px;text-align:center'>渲染错误: "+_e.message+"</div>"}}else if(state.phase==='gameOver'){renderGameSummary()}}else{showScreen('publicLobby');renderPublicLobby()}return}
     document.getElementById('lobbyTitle').textContent='🎮 游戏大厅';
     document.getElementById('hostRoomId').textContent=roomId;
     showScreen('publicLobby');
@@ -883,7 +882,8 @@ function handlePlayerMsg(msg){
   else if(msg.type==='teamChanged'){myTeam=msg.team;renderPublicLobby()}
   else if(msg.type==='state'){
     state=msg.state;
-    if(state.phase==='playing'&&document.getElementById('gameScreen').classList.contains('hidden'))enterGameScreen();
+    const inGamePhase=['coinflip','skillselect','playing'].includes(state.phase);
+    if(inGamePhase&&document.getElementById('gameScreen').classList.contains('hidden'))enterGameScreen();
     if(state.phase==='gameOver'){
       if(document.getElementById('gameScreen').classList.contains('hidden'))enterGameScreen();
       renderGameSummary();
@@ -892,7 +892,7 @@ function handlePlayerMsg(msg){
       if(document.getElementById('publicLobby').classList.contains('hidden'))showScreen('publicLobby');
       renderPublicLobby();
     }
-    if(state.phase==='playing'){
+    if(inGamePhase){
       window.G.gameId=state.currentGame;
 var _renderFn=window.G['renderG'+state.currentGame];
       if(_renderFn)try{_renderFn.call(window.G)}catch(_e){console.error('Render error:',_e);var _ga=document.getElementById('gameArea');if(_ga)_ga.innerHTML="<div style='color:#f87171;padding:20px;text-align:center'>渲染错误: "+_e.message+"</div>"}
