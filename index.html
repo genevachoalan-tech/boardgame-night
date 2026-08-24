@@ -954,6 +954,7 @@ window.G.initG1=function(){
 window.G.renderG1=function(){
   if(!state.game)return;
   const g=state.game;
+  if(!document.getElementById('g1Round'))document.getElementById('gameInfo').innerHTML='<span>回合 <b id="g1Round">1</b></span><span>牌堆 <b id="g1DeckN">42</b></span><span id="g1Turn"></span>';
   document.getElementById('g1Round').textContent=state.round;
   document.getElementById('g1DeckN').textContent=g.deckCount;
   // 比大小阶段
