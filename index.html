@@ -873,7 +873,7 @@ function handlePlayerMsg(msg){
     if(msg.name)myName=msg.name;if(msg.team)myTeam=msg.team;if(msg.charId)myCharId=msg.charId;
     const roomId=document.getElementById('joinRoomInput').value.trim().toUpperCase();
     saveReconnectCode(roomId,msg.reconnectCode,myName,myCharId);
-    if(msg.reconnected&&msg.state){state=msg.state;if(state.phase==='playing'||state.phase==='gameOver'){enterGameScreen();if(state.phase==='playing'){window.G.gameId=state.currentGame;if(window.G.render)window.G.render()}else if(state.phase==='gameOver'){renderGameSummary()}}else{showScreen('publicLobby');renderPublicLobby()}return}
+    if(msg.reconnected&&msg.state){state=msg.state;if(state.phase==='playing'||state.phase==='gameOver'){enterGameScreen();if(state.phase==='playing'){window.G.gameId=state.currentGame;window.G.render = window.G['renderG'+state.currentGame];if(window.G.render)window.G.render()}else if(state.phase==='gameOver'){renderGameSummary()}}else{showScreen('publicLobby');renderPublicLobby()}return}
     document.getElementById('lobbyTitle').textContent='🎮 游戏大厅';
     document.getElementById('hostRoomId').textContent=roomId;
     showScreen('publicLobby');
@@ -894,7 +894,7 @@ function handlePlayerMsg(msg){
     }
     if(state.phase==='playing'){
       window.G.gameId=state.currentGame;
-      if(window.G.render)window.G.render();
+      window.G.render = window.G['renderG'+state.currentGame];if(window.G.render)window.G.render();
       renderProgress('gameProgress');
       document.getElementById('gameTitle').textContent=GAMES[state.currentGame-1].icon+' '+GAMES[state.currentGame-1].name;
     }
