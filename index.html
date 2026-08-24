@@ -873,7 +873,7 @@ function handlePlayerMsg(msg){
     if(msg.name)myName=msg.name;if(msg.team)myTeam=msg.team;if(msg.charId)myCharId=msg.charId;
     const roomId=document.getElementById('joinRoomInput').value.trim().toUpperCase();
     saveReconnectCode(roomId,msg.reconnectCode,myName,myCharId);
-    if(msg.reconnected&&msg.state){state=msg.state;if(state.phase==='playing'||state.phase==='gameOver'){enterGameScreen();if(state.phase==='playing'){window.G.gameId=state.currentGame;window.G.render = window.G['renderG'+state.currentGame];if(window.G.render)window.G.render()}else if(state.phase==='gameOver'){renderGameSummary()}}else{showScreen('publicLobby');renderPublicLobby()}return}
+    if(msg.reconnected&&msg.state){state=msg.state;if(state.phase==='playing'||state.phase==='gameOver'){enterGameScreen();if(state.phase==='playing'){window.G.gameId=state.currentGame;var _renderFn=window.G['renderG'+state.currentGame];if(_renderFn)try{_renderFn.call(window.G)}catch(_e){console.error('Render error:',_e);var _ga=document.getElementById('gameArea');if(_ga)_ga.innerHTML="<div style='color:#f87171;padding:20px;text-align:center'>渲染错误: "+_e.message+"</div>"}}else if(state.phase==='gameOver'){renderGameSummary()}}else{showScreen('publicLobby');renderPublicLobby()}return}
     document.getElementById('lobbyTitle').textContent='🎮 游戏大厅';
     document.getElementById('hostRoomId').textContent=roomId;
     showScreen('publicLobby');
@@ -894,7 +894,8 @@ function handlePlayerMsg(msg){
     }
     if(state.phase==='playing'){
       window.G.gameId=state.currentGame;
-      window.G.render = window.G['renderG'+state.currentGame];if(window.G.render)window.G.render();
+var _renderFn=window.G['renderG'+state.currentGame];
+      if(_renderFn)try{_renderFn.call(window.G)}catch(_e){console.error('Render error:',_e);var _ga=document.getElementById('gameArea');if(_ga)_ga.innerHTML="<div style='color:#f87171;padding:20px;text-align:center'>渲染错误: "+_e.message+"</div>"}
       renderProgress('gameProgress');
       document.getElementById('gameTitle').textContent=GAMES[state.currentGame-1].icon+' '+GAMES[state.currentGame-1].name;
     }
